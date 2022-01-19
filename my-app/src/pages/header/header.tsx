@@ -7,12 +7,19 @@ import {
   Grid,
   IconButton,
   Input,
+  ToggleButton,
+  ToggleButtonGroup,
   Toolbar,
+  Typography,
 } from "@mui/material";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { getData } from "../../API/getData";
-import { IListImage } from "../../Interface/listImageData";
-import { IItemElements, INasaData } from "../../Interface/nasaData";
+import {
+  changeStatus,
+  SELECTEDTAB,
+  setDataImageAPI,
+} from "../../Component/slice/imageSlice";
+import { INasaData } from "../../Interface/nasaData";
 import { useAppDispatch } from "../../reduxToolkit/hook";
 import useStyles from "./headerStyle";
 
@@ -22,6 +29,15 @@ const Header: React.FC<HeaderProps> = (props) => {
   const dispatch = useAppDispatch();
   const [inputData, setInputData] = useState<string>("");
   const [listData, setListData] = useState<INasaData | undefined>();
+  const [selectedTab, setSelectedTab] = React.useState("web");
+
+  const handleChangeTab = (
+    event: React.MouseEvent<HTMLElement>,
+    tabSelected: string
+  ) => {
+    setSelectedTab(tabSelected);
+    dispatch(changeStatus(tabSelected));
+  };
 
   const onChange = (
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -39,19 +55,7 @@ const Header: React.FC<HeaderProps> = (props) => {
 
   useEffect(() => {
     if (listData && listData.collection && listData.collection.items.length) {
-      const temp: IListImage[] = [];
-      listData.collection.items.map((item: IItemElements) => {
-        return temp.push({
-          title: item.data[0].title ?? "",
-          content: item.data[0].description,
-          alt: item.data[0].description ?? "",
-          linkData: item?.links ? item?.links[0].href : "",
-          dateCreated: item.data[0].date_created ?? null,
-          like: false,
-          remove: false,
-        });
-      });
-      localStorage.setItem("NasaData", JSON.stringify(temp));
+      dispatch(setDataImageAPI(listData));
     }
   }, [listData, dispatch]);
   return (
@@ -80,19 +84,35 @@ const Header: React.FC<HeaderProps> = (props) => {
                   onChange={onChange}
                 ></Input>
               </Grid>
-              <Grid item xs={9}>
-                <Grid container>
-                  <Grid item xs={2}>
-                    All Data
-                  </Grid>
-                  <Grid item xs={2}>
-                    Liked
-                  </Grid>
-                  <Grid item xs={2}>
-                    Removed
-                  </Grid>
+              <Grid item xs={6}>
+                <Grid container padding={1} justifyContent={"center"}>
+                  <ToggleButtonGroup
+                    value={selectedTab}
+                    exclusive
+                    onChange={handleChangeTab}
+                  >
+                    <ToggleButton
+                      className={classes.ToggleButton}
+                      value={SELECTEDTAB.ALL}
+                    >
+                      <Typography color={"white"}>All images</Typography>
+                    </ToggleButton>
+                    <ToggleButton
+                      value={SELECTEDTAB.LIKED}
+                      className={classes.ToggleButton}
+                    >
+                      <Typography color={"white"}>Liked images</Typography>
+                    </ToggleButton>
+                    <ToggleButton
+                      value={SELECTEDTAB.REMOVED}
+                      className={classes.ToggleButton}
+                    >
+                      <Typography color={"white"}>Removed images</Typography>
+                    </ToggleButton>
+                  </ToggleButtonGroup>
                 </Grid>
               </Grid>
+              <Grid item xs={3}></Grid>
             </Grid>
           </Toolbar>
         </AppBar>

@@ -68,8 +68,19 @@ export const imageSlice = createSlice({
       );
       state.listImage[index].remove = action.payload.status ? false : true;
       localStorage.setItem("nasaData", JSON.stringify(state.listImage));
-      // state.listImage = action.payload;
     },
+
+    changeContent: (
+      state,
+      action: PayloadAction<{ id: string; content?: string }>
+    ) => {
+      const index = state.listImage.findIndex(
+        (img) => img.nasa_id === action.payload.id
+      );
+      state.listImage[index].content = action.payload.content;
+      localStorage.setItem("nasaData", JSON.stringify(state.listImage));
+    },
+
     changeStatus: (state, action: PayloadAction<string>) => {
       state.selectedTab = action.payload;
     },
@@ -109,6 +120,7 @@ export const {
   changeStatus,
   actionRemove,
   changeSortType,
+  changeContent,
 } = imageSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type

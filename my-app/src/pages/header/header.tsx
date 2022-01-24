@@ -1,7 +1,9 @@
 import SearchTwoToneIcon from "@mui/icons-material/SearchTwoTone";
 import {
   AppBar,
+  Backdrop,
   Box,
+  CircularProgress,
   Container,
   CssBaseline,
   Grid,
@@ -46,10 +48,14 @@ const Header: React.FC<HeaderProps> = (props) => {
     setInputData(event.target?.value);
   };
 
+  const [open, setOpen] = React.useState(false);
+
   const getDataSearch = async () => {
+    setOpen(!open);
     const resp = await getData(inputData);
     if (resp) {
       setListData(resp);
+      setOpen(false);
     }
   };
 
@@ -121,6 +127,12 @@ const Header: React.FC<HeaderProps> = (props) => {
       <Container>
         <Box sx={{ my: 2 }}>{props.children}</Box>
       </Container>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </>
   );
 };

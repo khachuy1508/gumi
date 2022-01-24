@@ -1,5 +1,6 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import EditIcon from "@mui/icons-material/Edit";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import {
@@ -10,9 +11,10 @@ import {
   Grid,
   IconButton,
   Tooltip,
-  Typography
+  Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
+import ConfirmDialog from "../../pages/dialog/dialog";
 import useStyles from "./imageCardStyle";
 import { ImageCardInterface } from "./interface";
 
@@ -26,9 +28,11 @@ const ImageCard: React.FC<ImageCardInterface> = (props) => {
     content,
     alt,
     linkData,
+    nasa_id,
   } = props;
 
   const classes = useStyles();
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
 
   const handleClickRemove = () => {
     if (onClickActionDelete) {
@@ -40,6 +44,11 @@ const ImageCard: React.FC<ImageCardInterface> = (props) => {
       onClickActionFavorite();
     }
   };
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
   return (
     <Card
       sx={{
@@ -77,6 +86,22 @@ const ImageCard: React.FC<ImageCardInterface> = (props) => {
                 {like ? <FavoriteIcon /> : <FavoriteBorderIcon />}
               </IconButton>
             </Tooltip>
+          </Grid>
+          <Grid item>
+            <Tooltip title="Edit">
+              <IconButton color="success" onClick={handleOpenDialog}>
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+            <ConfirmDialog
+              open={openDialog}
+              setOpen={setOpenDialog}
+              title={title}
+              alt={alt}
+              linkData={linkData}
+              content={content}
+              nasa_id={nasa_id}
+            ></ConfirmDialog>
           </Grid>
         </Grid>
       </CardActions>

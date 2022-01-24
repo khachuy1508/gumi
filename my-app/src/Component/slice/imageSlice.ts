@@ -7,6 +7,13 @@ export enum SELECTEDTAB {
   LIKED = "LIKED",
   REMOVED = "REMOVED",
 }
+
+export enum SORT {
+  A_TO_Z = "A_TO_Z",
+  Z_TO_A = "Z_TO_A",
+  NEWEST = "NEWEST",
+  OLDEST = "OLDEST",
+}
 interface ImageState {
   listImage: IListImage[];
   selectedTab: string;
@@ -66,6 +73,32 @@ export const imageSlice = createSlice({
     changeStatus: (state, action: PayloadAction<string>) => {
       state.selectedTab = action.payload;
     },
+    changeSortType: (state, action: PayloadAction<string>) => {
+      switch (action.payload) {
+        case SORT.A_TO_Z:
+          state.listImage.sort((a, b) => {
+            return a.title < b.title ? -1 : 1;
+          });
+          break;
+        case SORT.Z_TO_A:
+          state.listImage.sort((a, b) => {
+            return a.title > b.title ? -1 : 1;
+          });
+          break;
+
+        case SORT.NEWEST:
+          state.listImage.sort((a, b) => {
+            return a.dateCreated < b.dateCreated ? -1 : 1;
+          });
+          break;
+
+        case SORT.OLDEST:
+          state.listImage.sort((a, b) => {
+            return a.dateCreated > b.dateCreated ? -1 : 1;
+          });
+          break;
+      }
+    },
   },
 });
 
@@ -75,6 +108,7 @@ export const {
   actionLike,
   changeStatus,
   actionRemove,
+  changeSortType,
 } = imageSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type

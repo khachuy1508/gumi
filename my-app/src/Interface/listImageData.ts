@@ -1,10 +1,10 @@
 export interface IListImage {
-  title?: string;
+  title: string;
   content?: string;
   alt?: string;
   linkData: string;
   like: boolean;
   remove: boolean;
-  dateCreated?: Date;
+  dateCreated: Date;
   nasa_id: string;
 }
